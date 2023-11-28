@@ -76,17 +76,38 @@ def main(nnovo):
             del st.session_state.prof
             st.rerun()
         if st.session_state.prof['isAdmin']:
-            # all_users = list(db["userprofs"].find())
-            # all_keys = [f"{user['full_name']} - {user['username']}" for user in all_users]
-            # matrícula_name = sorted(all_keys)
-            # selec_prof = st.selectbox("selecione o professor", matrícula_name)
-            # username = selec_prof.split(" - ")[1]
-            all_turmas = db['META'].find_one({'_id': stds_col}).get('matriz', {})
-            all_keys = [turma for turma in all_turmas ]
-            turma = st.selectbox("selecione a turma", sorted(all_keys))
-            componentes = all_turmas.get(turma, [])
-            componente = st.selectbox("selecione o componente", sorted(componentes))
-            seleção = f'{turma} - {componente}'
+            profs_or_classes = st.radio("selecione", ["professor", "turma"])
+            if profs_or_classes == "professor":
+                all_users = list(db["userprofs"].find({'isTeacher': True}))
+                all_keys = [f"{user['full_name']} - {user['username']}" for user in all_users]
+                matrícula_name = sorted(all_keys)
+                selec_prof = st.selectbox("selecione o professor", matrícula_name)
+                username = selec_prof.split(" - ")[1]
+                prof_prog = db['META'].find_one(
+                    {'_id': stds_col }
+                ).get(
+                    'programação', {}
+                ).get(username,{})
+                if not prof_prog:
+                    st.error("Professor não tem programação")
+                    st.stop()
+                st.session_state.prof['programação'] = prof_prog
+                prog = st.session_state.prof['programação']
+                my_diarius = {}
+                for key, value in prog.items():
+                    for subvalue in value:
+                        my_diarius[f'{key} - {subvalue}'] = (subvalue, key)       
+                seleção = st.selectbox("selecione", list(my_diarius.keys()))
+                st.session_state.prof['diarios'] = my_diarius
+                turma = seleção.split(' - ')[0]
+                componente = seleção.split(' - ')[1]  
+            else:
+                all_turmas = db['META'].find_one({'_id': stds_col}).get('matriz', {})
+                all_keys = [turma for turma in all_turmas ]
+                turma = st.selectbox("selecione a turma", sorted(all_keys))
+                componentes = all_turmas.get(turma, [])
+                componente = st.selectbox("selecione o componente", sorted(componentes))
+                seleção = f'{turma} - {componente}'
         else:
             prof_prog = db['META'].find_one(
                 {'_id': stds_col }

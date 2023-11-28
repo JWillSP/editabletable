@@ -4,18 +4,12 @@ import streamlit as st
 try:
     dbcred = st.secrets["dbcred"]
     db1 = st.secrets["db1"]
-    users = st.secrets["users"]
-    ag = st.secrets["ag"]
-    sc = st.secrets["sc"]
     stds_col = st.secrets["alunos"]
     idvmeds = st.secrets["idvmeds"]
 except FileNotFoundError:
     import os
     dbcred = os.environ['dbcred']
     db1 = os.environ["db1"]
-    users = os.environ["users"]
-    ag = os.environ["ag"]
-    sc = os.environ["sc"]
     stds_col = os.environ["alunos"]
     idvmeds = os.environ["idvmeds"]
 
