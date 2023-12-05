@@ -99,8 +99,7 @@ def main(nnovo):
                         my_diarius[f'{key} - {subvalue}'] = (subvalue, key)       
                 seleção = st.selectbox("selecione", list(my_diarius.keys()))
                 st.session_state.prof['diarios'] = my_diarius
-                turma = seleção.split(' - ')[0]
-                componente = seleção.split(' - ')[1]  
+                turma, _, componente = seleção.partition(" - ")
             else:
                 all_turmas = db['META'].find_one({'_id': stds_col}).get('matriz', {})
                 all_keys = [turma for turma in all_turmas ]
@@ -123,8 +122,7 @@ def main(nnovo):
                     my_diarius[f'{key} - {subvalue}'] = (subvalue, key)       
             seleção = st.selectbox("selecione", list(my_diarius.keys()))
             st.session_state.prof['diarios'] = my_diarius
-            turma = seleção.split(' - ')[0]
-            componente = seleção.split(' - ')[1]    
+            turma, _, componente = seleção.partition(" - ")
         if seleção not in st.session_state:
             print('setando base')
             st.session_state[seleção] = base(componente, turma)
@@ -143,7 +141,8 @@ def main(nnovo):
             main_user_admin = full_name.split(" ")[0]
         else:
             main_user_admin = None
-
+        st.write(f"Turma: {turma}")
+        st.write(f"Componente: {componente}")
         to_receive = main_func(
             componente,
             turma,

@@ -30,7 +30,6 @@ def base(componente, turma):
     coro = list(show_performance_query_result(query))
     import pandas as pd
     df = pd.DataFrame(coro)
-    df.head()
     def norm(string):
     # take off all latim accents like á, ã, ç, etc
         import unicodedata
@@ -59,3 +58,6 @@ def base(componente, turma):
     pivot = pivot[cols]
 
     return pivot
+
+
+
