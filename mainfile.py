@@ -46,7 +46,7 @@ def put_uuid(text):
 client = MongoClient(dbcred)  # Substitua pela URL do seu banco de dados MongoDB
 db = client[db1]
 collection = db[ag]
-HORAS_NUMBER = 10
+HORAS_NUMBER = 45
 
 if 'novo' not in st.session_state:
     st.session_state.novo = st.empty()
