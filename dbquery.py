@@ -6,12 +6,14 @@ try:
     db1 = st.secrets["db1"]
     stds_col = st.secrets["alunos"]
     idvmeds = st.secrets["idvmeds"]
+    rec = st.secrets["rec"]
 except FileNotFoundError:
     import os
     dbcred = os.environ['dbcred']
     db1 = os.environ["db1"]
     stds_col = os.environ["alunos"]
     idvmeds = os.environ["idvmeds"]
+    rec = os.environ["rec"]
 
 
 def base(componente, turma):
@@ -59,5 +61,41 @@ def base(componente, turma):
 
     return pivot
 
+import datetime
+from pymongo import MongoClient
+def update_document(full_document):
+    client = MongoClient(dbcred)
+    db = client[db1]
+    history_coll = db[rec]
+    created_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    last_modified = created_at
 
+    if not full_document:
+        print("No fullDocument found in changeEvent.")
+        return
+    name = full_document["name"]
+    matricula = full_document["matricula"]
+    envio_por = full_document["envio_por"]
+    nota = full_document["nota"]
+    disciplina = full_document["disciplina"]
+    med = nota
+    matricula = matricula
+    componente = disciplina
+    result = history_coll.update_one(
+        {"matricula": matricula, "componente": componente},
+        {
+            "$set": {"name": name, "med": med, "envio_por": envio_por, "lastModified": last_modified},
+            "$setOnInsert": {"createdAt": created_at}
+        },
+        upsert=True
+    )
+    return result
 
+def query_rec(seleção_of_students, componente):
+    from pymongo import MongoClient
+    client = MongoClient(dbcred)
+    db = client[db1]
+    history_coll = db[rec]
+    # make a query for get all grade for a student list
+    query = {"matricula": {"$in": seleção_of_students}, "componente": componente}
+    return history_coll.find(query)
