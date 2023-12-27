@@ -245,8 +245,8 @@ def do_mapa_final_so_parecer(array, turma=''):
     print(item.get("estudante"))
     estudante  = item.get("estudante").split(' - ')[0]
     ws.cell(row=row, column=1).value = estudante
-    seriemaior = dfmaior.loc[estudante, :]
-    seriemenor = dfmenor.loc[estudante, :]
+    seriemaior = dfmaior.loc[item.get("estudante"), :]
+    seriemenor = dfmenor.loc[item.get("estudante"), :]
     # compare to know if seriemaior has more different quantity of NaN values than seriemenor
     if_abandoned = seriemaior.count() > seriemenor.count()
     if if_abandoned:
