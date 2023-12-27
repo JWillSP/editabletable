@@ -249,6 +249,9 @@ def do_mapa_final_so_parecer(array, turma=''):
     seriemenor = dfmenor.loc[item.get("estudante"), :]
     # compare to know if seriemaior has more different quantity of NaN values than seriemenor
     if_abandoned = seriemaior.count() > seriemenor.count()
+    print(seriemaior.count())
+    print(seriemenor.count())
+
     if if_abandoned:
       status = 'DESISTENTE'
     else:
