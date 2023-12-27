@@ -255,7 +255,7 @@ def do_mapa_final_so_parecer(array, turma=''):
     if if_abandoned:
       status = 'DESISTENTE'
     else:
-      only_recovered = seriemenor.dropna()
+      only_recovered = seriemenor.replace('', None).dropna().astype(float)
       if_has_3_values_lt_5 = only_recovered[only_recovered < 5].count() > 3
       if if_has_3_values_lt_5:
         status = 'REPROVADO(A)'
