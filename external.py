@@ -213,3 +213,40 @@ def do_mapa_final(array, turma=''):
   bytes_data = buffer.getvalue()
   buffer.close()
   return bytes_data
+
+
+def do_mapa_final_so_parecer(array, turma=''):
+  if 'NOT' in turma:
+    turno = 'NOTURNO'
+  elif 'MAT' in turma:
+    turno = 'MATUTINO'
+  elif 'VES' in turma:
+    turno = 'VESPERTINO'
+  else:
+    turno = 'INTEGRAL 7H'
+  
+
+    filename = './statics/MAPA_FINAL_2023_SO_PARECER.xlsx'
+  print(filename)
+  df = array[0]
+  df['estudante'] = df.index
+  lista = [x[1].to_dict() for x in df.iterrows()]
+  wb = load_workbook(filename=filename)
+  ws = wb.active
+  turno = get_turno(turma)
+  ws['A2'] = turma + ' - ' + turno
+  start_row = 5
+  num_rows = start_row + 3*len(lista)
+  for i, item in enumerate(lista):
+    row = start_row + i
+    print(item.get("estudante"))
+    estudante  = item.get("estudante").split(' - ')[0]
+    ws.cell(row=row, column=1).value = estudante
+
+
+  delete_rows(ws=ws, row=num_rows)
+  buffer = io.BytesIO()
+  wb.save(buffer)
+  bytes_data = buffer.getvalue()
+  buffer.close()
+  return bytes_data

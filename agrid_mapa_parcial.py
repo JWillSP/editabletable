@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 from req import send_unique_grade
-from external import do_mapa, do_mapa_final
+from external import do_mapa, do_mapa_final, do_mapa_final_so_parecer
 from dbquery import update_document, query_rec
 
 def to_float_grade(nota):
@@ -246,3 +246,19 @@ def mapa_final(turma, df):
         download_excel_file(lista=bytes_data, turma=turma, tipo='MAPA_FINAL')
 
 
+
+def mapa_final_so_conceito(turma, df):
+    if df.empty:
+        st.info("Não houve nenhum lançamento de notas para essa turma")
+        st.stop()
+    df_to_show = df.copy()
+    st.write("### ESTUDANTES EM RECUPERAÇÃO")
+    if 'TF' in turma or 'TJ' in turma:
+       df_to_show3 = select_bad_grades_eja(df_to_show)
+    else:
+       df_to_show3 = select_bad_grades(df_to_show)
+    st.write(df_to_show3.fillna("~~"))
+    result = [df_to_show3]
+    bytes_data = do_mapa_final_so_parecer(result, turma=turma) 
+    if bytes_data:
+        download_excel_file(lista=bytes_data, turma=turma, tipo='MAPA_FINAL')
