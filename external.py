@@ -236,14 +236,12 @@ def do_mapa_final_so_parecer(array, turma=''):
   turno = get_turno(turma)
   ws['A2'] = turma + ' - ' + turno
   start_row = 5
-  num_rows = start_row + 3*len(lista)
+  num_rows = start_row + len(lista)
   for i, item in enumerate(lista):
     row = start_row + i
     print(item.get("estudante"))
     estudante  = item.get("estudante").split(' - ')[0]
     ws.cell(row=row, column=1).value = estudante
-
-
   delete_rows(ws=ws, row=num_rows)
   buffer = io.BytesIO()
   wb.save(buffer)
