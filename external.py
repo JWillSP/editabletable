@@ -228,6 +228,8 @@ def do_mapa_final_so_parecer(array, turma=''):
 
     filename = './statics/MAPA_FINAL_2023_SO_PARECER.xlsx'
   print(filename)
+  dfmaior = array[0]
+  dfmenor = array[1]
   df = array[0]
   df['estudante'] = df.index
   lista = [x[1].to_dict() for x in df.iterrows()]
@@ -238,10 +240,26 @@ def do_mapa_final_so_parecer(array, turma=''):
   start_row = 5
   num_rows = start_row + len(lista)
   for i, item in enumerate(lista):
+    status = 'APROVADO(A)'
     row = start_row + i
     print(item.get("estudante"))
     estudante  = item.get("estudante").split(' - ')[0]
     ws.cell(row=row, column=1).value = estudante
+    seriemaior = dfmaior.loc[estudante, :]
+    seriemenor = dfmenor.loc[estudante, :]
+    # compare to know if seriemaior has more different quantity of NaN values than seriemenor
+    if_abandoned = seriemaior.count() > seriemenor.count()
+    if if_abandoned:
+      status = 'DESISTENTE'
+    else:
+      only_recovered = seriemenor.dropna()
+      if_has_3_values_lt_5 = only_recovered[only_recovered < 5].count() > 3
+      if if_has_3_values_lt_5:
+        status = 'REPROVADO(A)'
+
+    ws.cell(row=row, column=3).value = status
+
+
   delete_rows(ws=ws, row=num_rows)
   buffer = io.BytesIO()
   wb.save(buffer)

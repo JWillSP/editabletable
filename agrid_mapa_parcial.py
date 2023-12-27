@@ -258,7 +258,34 @@ def mapa_final_so_conceito(turma, df):
     else:
        df_to_show3 = select_bad_grades(df_to_show)
     st.write(df_to_show3.fillna("~~"))
-    result = [df_to_show3]
+    colunas = df_to_show3.columns[df_to_show3.notna().any()]
+    df_to_show5 = pd.DataFrame([], index=df_to_show3.index, columns=colunas)
+    for componente in colunas:
+      df_to_show4 = df_to_show3[componente].dropna()
+      df_to_showz = df_to_show4.reset_index()
+      df_to_showz['matrícula'] = df_to_showz['estudante'].apply(lambda x: x.split(' - ')[1])
+      search = list(query_rec(
+          seleção_of_students=df_to_showz['matrícula'].to_list(), 
+          componente=componente))
+      if search:
+        ndfs = pd.DataFrame(search)
+        ndfs.index = ndfs['name'] + ' - ' + ndfs['matricula']
+        ndfs['nota'] = ndfs['med']
+        ndfs['compareceu'] = True
+        others = pd.DataFrame([], index=df_to_show4[~df_to_show4.index.isin(ndfs.index)].index, columns=['nota', 'compareceu'])
+        others['compareceu'] = False
+        others['nota'] = ''
+        ndf = pd.concat([ndfs, others], axis=0 )[['nota', 'compareceu']]
+        st.session_state[f'{turma}{componente}'] = ndf
+      else:
+        ndf =  pd.DataFrame()
+        ndf.index = df_to_show4.index
+        ndf['nota'] = ''
+        ndf['compareceu'] = False
+        st.session_state[f'{turma}{componente}'] = ndf
+      df_to_show5.loc[:, componente] = ndf['nota']
+    st.write(df_to_show5)
+    result = [df_to_show3, df_to_show5]
     bytes_data = do_mapa_final_so_parecer(result, turma=turma) 
     if bytes_data:
         download_excel_file(lista=bytes_data, turma=turma, tipo='MAPA_FINAL')
