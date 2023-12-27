@@ -226,7 +226,7 @@ def do_mapa_final_so_parecer(array, turma=''):
     turno = 'INTEGRAL 7H'
   
 
-    filename = './statics/MAPA_FINAL_2023_SO_PARECER.xlsx'
+  filename = './statics/MAPA_FINAL_2023_SO_PARECER.xlsx'
   print(filename)
   dfmaior = array[0]
   dfmenor = array[1]
